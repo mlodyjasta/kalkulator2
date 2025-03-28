@@ -1,0 +1,141 @@
+import { useState, useEffect } from "react";
+
+export default function FenceCalculator() {
+  // Ustawienia początkowe parametrów kalkulatora
+  const [length, setLength] = useState(10); // długość ogrodzenia w metrach
+  const [height, setHeight] = useState(1.8); // wysokość przęsła w metrach
+  const [profileCount, setProfileCount] = useState(1); // liczba profili na przęsło
+  const [profilePrice, setProfilePrice] = useState(50); // cena jednego profilu w zł
+  const [sidePostPrice, setSidePostPrice] = useState(100); // cena słupka bocznego w zł
+  const [gateCount, setGateCount] = useState(0); // liczba furtek/bram
+  const [gatePrice, setGatePrice] = useState(300); // cena jednej furtki/bramy w zł
+  const [marginPercent, setMarginPercent] = useState(20); // marża procentowa
+  const [calculatedPrice, setCalculatedPrice] = useState(0);
+
+  // Prosty algorytm kalkulacji:
+  // - Przęsła: liczba przęseł = długość ogrodzenia / 2 (przyjmując, że jedno przęsło ma 2 m szerokości)
+  // - Koszt profili: (ilość przęseł * liczba profili) * cena jednego profilu
+  // - Koszt słupków: (ilość przęseł + 1) * cena słupka
+  // - Koszt furtek/bram: liczba bram * cena bramy
+  // - Suma kosztów: suma kosztów powyższych elementów
+  // - Do sumy dodajemy marżę
+
+  useEffect(() => {
+    const sectionWidth = 2; // załóżmy, że jedno przęsło ma 2 metry szerokości
+    const numSections = Math.max(1, Math.floor(length / sectionWidth));
+    const profilesCost = numSections * profileCount * profilePrice;
+    const postsCost = (numSections + 1) * sidePostPrice;
+    const gatesCost = gateCount * gatePrice;
+    const baseCost = profilesCost + postsCost + gatesCost;
+    const totalCost = baseCost * (1 + marginPercent / 100);
+    setCalculatedPrice(totalCost);
+  }, [length, height, profileCount, profilePrice, sidePostPrice, gateCount, gatePrice, marginPercent]);
+
+  return (
+    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "20px", fontFamily: "Arial, sans-serif" }}>
+      <h1>Kalkulator Ogrodzeń Metalowych</h1>
+      
+      <div style={{ marginBottom: "15px" }}>
+        <label>
+          Długość ogrodzenia (m): 
+          <input
+            type="number"
+            value={length}
+            onChange={(e) => setLength(Number(e.target.value))}
+            style={{ marginLeft: "10px", width: "80px" }}
+          />
+        </label>
+      </div>
+      
+      <div style={{ marginBottom: "15px" }}>
+        <label>
+          Wysokość przęsła (m): 
+          <input
+            type="number"
+            step="0.1"
+            value={height}
+            onChange={(e) => setHeight(Number(e.target.value))}
+            style={{ marginLeft: "10px", width: "80px" }}
+          />
+        </label>
+      </div>
+      
+      <div style={{ marginBottom: "15px" }}>
+        <label>
+          Liczba profili na przęsło: 
+          <input
+            type="number"
+            value={profileCount}
+            onChange={(e) => setProfileCount(Number(e.target.value))}
+            style={{ marginLeft: "10px", width: "80px" }}
+          />
+        </label>
+      </div>
+      
+      <div style={{ marginBottom: "15px" }}>
+        <label>
+          Cena za profil (zł): 
+          <input
+            type="number"
+            value={profilePrice}
+            onChange={(e) => setProfilePrice(Number(e.target.value))}
+            style={{ marginLeft: "10px", width: "80px" }}
+          />
+        </label>
+      </div>
+      
+      <div style={{ marginBottom: "15px" }}>
+        <label>
+          Cena słupka bocznego (zł): 
+          <input
+            type="number"
+            value={sidePostPrice}
+            onChange={(e) => setSidePostPrice(Number(e.target.value))}
+            style={{ marginLeft: "10px", width: "80px" }}
+          />
+        </label>
+      </div>
+      
+      <div style={{ marginBottom: "15px" }}>
+        <label>
+          Liczba furtek/bram: 
+          <input
+            type="number"
+            value={gateCount}
+            onChange={(e) => setGateCount(Number(e.target.value))}
+            style={{ marginLeft: "10px", width: "80px" }}
+          />
+        </label>
+      </div>
+      
+      <div style={{ marginBottom: "15px" }}>
+        <label>
+          Cena furtki/bramy (zł): 
+          <input
+            type="number"
+            value={gatePrice}
+            onChange={(e) => setGatePrice(Number(e.target.value))}
+            style={{ marginLeft: "10px", width: "80px" }}
+          />
+        </label>
+      </div>
+      
+      <div style={{ marginBottom: "15px" }}>
+        <label>
+          Marża (%): 
+          <input
+            type="number"
+            value={marginPercent}
+            onChange={(e) => setMarginPercent(Number(e.target.value))}
+            style={{ marginLeft: "10px", width: "80px" }}
+          />
+        </label>
+      </div>
+      
+      <hr style={{ margin: "20px 0" }} />
+      
+      <h2>Szacowany koszt: {calculatedPrice.toFixed(2)} zł</h2>
+      <p>Obliczenia przyjmują, że jedno przęsło ma 2 m szerokości.</p>
+    </div>
+  );
+}
